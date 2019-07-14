@@ -1,0 +1,42 @@
+version: '3'
+services:
+  electionPortalDb:
+    image: "ardalanfp/election_portal_db"
+  electionManagerDb:
+    image: "ardalanfp/election_manager_db"
+  mongo:
+    image: "mongo"
+  electionmanager:
+    image: "ardalanfp/fum_election_electionmanager"
+    links:
+        - electionManagerDb
+  electionportal:
+    image: "ardalanfp/fum_election_electionportal"
+    links:
+        - electionPortalDb
+  auth:
+    image: "sayid/auth"
+    links:
+        - mongo
+  visualizer:
+    image: "dockersamples/visualizer:stable"
+    ports:
+        - "8080:8080"
+    links:
+        - electionPortalDb
+        - electionManagerDb
+        - mongo
+        - electionmanager
+        - electionportal
+        - auth
+  election_ui:
+    image: "sayid/election_ui"
+    ports:
+        - "80:9090"
+    links:
+        - electionPortalDb
+        - electionManagerDb
+        - mongo
+        - electionmanager
+        - electionportal
+        - auth
